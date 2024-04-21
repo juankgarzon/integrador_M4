@@ -1,0 +1,196 @@
+![alt text](img_docker.png) ![alt text](docker_compose.png) ![alt text](intro-c.jpeg)  ![alt text](intro-b.png) ![alt text](spark.png)
+
+
+#  Sesión práctica de Docker, Docker-Compose con Hadoop, Hive y Spark en Linux Ubuntu versión 22.4
+
+El documento proporciona una guía para la instalación y configuración de Docker y  Docker-Compose para ejecutar Apache Hadoop, Apache Hive y Apache Spark en un entorno Linux Ubuntu versión 22.4. Docker Compose facilita la gestión de contenedores Docker multi-servicio, lo que permite ejecutar fácilmente una pila completa de herramientas de big data en un solo entorno.
+
+
+# Contenido
+
+ - Instalación
+ - Configuración
+ - Uso
+ 
+
+## Instalación
+ Pasos para instalar Docker en Ubuntu 22.04:
+1.  ****
+
+    Actualizar el índice de paquetes en Ubuntu:
+
+```
+sudo apt update
+
+```
+2.  **Instalar dependencias necesarias para añadir un nuevo repositorio sobre HTTPS:**
+
+```
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+```
+Al terminar la instalación, debe mostrar lo siguiente:
+![alt text](Inst_1.png)
+        
+3.  **Agregar la clave GPG oficial de Docker al sistema:**
+```
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+```
+4. **Agregar el repositorio de Docker al sistema:**
+```
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+```
+5. **Actualizar el índice de paquetes una vez más para reflejar los cambios del repositorio de Docker:**
+```
+sudo apt update
+
+```
+
+Al terminar de agragar la clave GPG oficial de Docker, se debe ver lo siguiente:
+
+![alt text](Inst_2.png)
+
+
+6. **Instalar Docker Engine**
+```
+sudo apt install docker-ce docker-ce-cli containerd.io
+
+```
+Al instalar los paquetes de Docker Engine, se observa lo siguiente:
+
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias... Hecho
+Leyendo la información de estado... Hecho
+Los paquetes indicados a continuación se instalaron de forma automática y ya no son necesarios.
+  libwpe-1.0-1 libwpebackend-fdo-1.0-1
+Utilice «sudo apt autoremove» para eliminarlos.
+Se instalarán los siguientes paquetes adicionales:
+  docker-buildx-plugin docker-ce-rootless-extras docker-compose-plugin git git-man liberror-perl libslirp0 pigz
+  slirp4netns
+Paquetes sugeridos:
+  aufs-tools cgroupfs-mount | cgroup-lite git-daemon-run | git-daemon-sysvinit git-doc git-email git-gui gitk
+  gitweb git-cvs git-mediawiki git-svn
+Se instalarán los siguientes paquetes NUEVOS:
+  containerd.io docker-buildx-plugin docker-ce docker-ce-cli docker-ce-rootless-extras docker-compose-plugin git
+  git-man liberror-perl libslirp0 pigz slirp4netns
+0 actualizados, 12 nuevos se instalarán, 0 para eliminar y 3 no actualizados.
+Se necesita descargar 124 MB de archivos.
+Se utilizarán 451 MB de espacio de disco adicional después de esta operación.
+¿Desea continuar? [S/n] s
+Des:1 http://co.archive.ubuntu.com/ubuntu jammy/universe amd64 pigz amd64 2.6-1 [63,6 kB]
+Des:2 https://download.docker.com/linux/ubuntu jammy/stable amd64 containerd.io amd64 1.6.31-1 [29,8 MB]
+Des:3 http://co.archive.ubuntu.com/ubuntu jammy/main amd64 liberror-perl all 0.17029-1 [26,5 kB]
+Des:4 http://co.archive.ubuntu.com/ubuntu jammy-updates/main amd64 git-man all 1:2.34.1-1ubuntu1.10 [954 kB]
+Des:5 http://co.archive.ubuntu.com/ubuntu jammy-updates/main amd64 git amd64 1:2.34.1-1ubuntu1.10 [3.166 kB]
+Des:6 http://co.archive.ubuntu.com/ubuntu jammy/main amd64 libslirp0 amd64 4.6.1-1build1 [61,5 kB]
+Des:7 http://co.archive.ubuntu.com/ubuntu jammy/universe amd64 slirp4netns amd64 1.0.1-2 [28,2 kB]
+Des:8 https://download.docker.com/linux/ubuntu jammy/stable amd64 docker-buildx-plugin amd64 0.14.0-1~ubuntu.22.04~jammy [29,7 MB]
+Des:9 https://download.docker.com/linux/ubuntu jammy/stable amd64 docker-ce-cli amd64 5:26.0.2-1~ubuntu.22.04~jammy [13,8 MB]
+Des:10 https://download.docker.com/linux/ubuntu jammy/stable amd64 docker-ce amd64 5:26.0.2-1~ubuntu.22.04~jammy [25,1 MB]
+Des:11 https://download.docker.com/linux/ubuntu jammy/stable amd64 docker-ce-rootless-extras amd64 5:26.0.2-1~ubuntu.22.04~jammy [9.322 kB]
+Des:12 https://download.docker.com/linux/ubuntu jammy/stable amd64 docker-compose-plugin amd64 2.26.1-1~ubuntu.22.04~jammy [12,4 MB]
+Descargados 124 MB en 2s (49,8 MB/s)             
+Seleccionando el paquete pigz previamente no seleccionado.
+(Leyendo la base de datos ... 205258 ficheros o directorios instalados actualmente.)
+/docker.service → /lib/systemd/system/docker.service.
+Created symlink /etc/systemd/system/sockets.target.wants/docker.socket → /lib/systemd/system/docker.socket.
+Configurando git (1:2.34.1-1ubuntu1.10) ...
+Procesando disparadores para man-db (2.10.2-1) ...
+Procesando disparadores para libc-bin (2.35-0ubuntu3.7) ...
+
+7. **Verificar que Docker se haya instalado correctamente ejecutando un contenedor de prueba**
+```
+sudo docker run hello-world
+
+```
+
+En la comprobación efectiva de instalación de Docker, se muestar lo siguiente:
+
+![alt text](Inst_3.png)
+
+8. **Al tener instalado Docker, el siguiente paso es instalar docker-compose, con la siguiente instrucción**
+
+```
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+
+```
+
+Se muestra lo siguiente:
+
+![alt text](Inst_4.png)
+
+9. **Aplica permisos de ejecución al binario descargado:**
+```
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+10. **Verifica que Docker Compose se haya instalado correctamente:**
+```
+docker-compose --version
+
+```
+Muestra lo siguiente:
+
+Docker Compose version v2.26.1
+
+
+
+## Uso
+
+Al tener instalado Docker, se comienza a iniciar la instancia de contenedor siguiendo los siguientes pasos
+
+1.  **Iniciar el servicio Docker (si no se inició automáticamente después de la instalación):**
+```
+sudo systemctl start docker
+
+```
+2.  **Descargar una imagen de contenedor, que se tiene previamente pre configurado, con todos los elementos necesarios a desarrollar.**
+```
+git clone https://github.com/lopezdar222/herramientas_big_data.git
+
+```
+
+3.  **Acceder a la carpeta, donde se descargo el contendor**
+ ```
+ cd herramientas_big_data
+
+```
+
+4.  **Generar instancia de contenedores de imágenes con Docker-Compose, con el archivo bash que contiene las instrucciones requeridas para el propósito de acceder a las diferentes herramientas Big Data, para el desarrollo de la práctica.**
+
+    **Es de aclarar, que debe estar dentro de la carpeta herramientas_big_data y que a su vez, debe contener el archivo docker-compose-v1.yml, el cual conteniene el bash anteriormente mencionado**
+ ```
+ sudo docker-compose -f docker-compose-v1.yml up -d
+
+```
+
+
+1.  **Ejecutar el Contenedor:**
+    
+    -   Navega al directorio del repositorio clonado.
+        
+    -   Ejecuta el siguiente comando para iniciar los servicios:
+
+```bash clipboard
+			sudo docker-compose up -d 
+```
+2.  **Acceder a los Servicios:**
+    
+    -   Una vez que los contenedores estén en funcionamiento, podrás acceder a los servicios a través de sus respectivos puertos expuestos.
+    -   Por ejemplo, puedes acceder a la interfaz web de Hadoop en `http://localhost:9870`.
+
+## Estructura del Proyecto
+
+-   `/docker-compose.yml`: Archivo de configuración principal de Docker Compose que define los servicios y la configuración del contenedor.
+-   `/hadoop`: Directorio que contiene los archivos de configuración y scripts relacionados con Hadoop.
+-   `/hive`: Directorio que contiene los archivos de configuración y scripts relacionados con Hive.
+-   `/spark`: Directorio que contiene los archivos de configuración y scripts relacionados con Spark.
+
+-   **Acceder a los Servicios:**
+    
+    -   Una vez que los contenedores estén en funcionamiento, podrás acceder a los servicios a través de sus respectivos puertos expuestos.
+    -   Por ejemplo, puedes acceder a la interfaz web de Hadoop en `http://localhost:9870`.
+    
+
